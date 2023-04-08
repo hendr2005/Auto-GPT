@@ -1,6 +1,6 @@
 import json
 import random
-import data
+from data.response_prompt import parse, Thought
 from colorama import Fore, Style
 import time
 import speak
@@ -39,28 +39,23 @@ def print_to_console(
 def print_assistant_thoughts(ai_name, assistant_reply, speak_text=False):
     try:
         # Parse and print Assistant response
-        assistant_reply_json = fix_and_parse_json(assistant_reply)
+        try:
+            assistant_thoughts = parse(assistant_reply, Thought)
+        except Exception as e:
+            assistant_thoughts = None
 
-        # Check if assistant_reply_json is a string and attempt to parse it into a JSON object
-        if isinstance(assistant_reply_json, str):
-            try:
-                assistant_reply_json = json.loads(assistant_reply_json)
-            except json.JSONDecodeError:
-                print_to_console("Error: Invalid JSON.\n", Fore.RED, assistant_reply)
-                assistant_reply_json = {}
-
+        assistant_thoughts_text = None
         assistant_thoughts_reasoning = None
         assistant_thoughts_plan = None
         assistant_thoughts_speak = None
         assistant_thoughts_criticism = None
-        assistant_thoughts = assistant_reply_json.get("thoughts", {})
-        assistant_thoughts_text = assistant_thoughts.get("text")
 
         if assistant_thoughts:
-            assistant_thoughts_reasoning = assistant_thoughts.get("reasoning")
-            assistant_thoughts_plan = assistant_thoughts.get("plan")
-            assistant_thoughts_criticism = assistant_thoughts.get("criticism")
-            assistant_thoughts_speak = assistant_thoughts.get("speak")
+            assistant_thoughts_text = assistant_thoughts.text
+            assistant_thoughts_reasoning = assistant_thoughts.reasoning
+            assistant_thoughts_plan = assistant_thoughts.plan
+            assistant_thoughts_criticism = assistant_thoughts.criticism
+            assistant_thoughts_speak = assistant_thoughts.speak
 
         print_to_console(
             f"{ai_name.upper()} THOUGHTS:", Fore.YELLOW, assistant_thoughts_text

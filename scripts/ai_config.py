@@ -1,6 +1,7 @@
 import yaml
-import data
+from data.response_prompt import load_prompt
 import os
+
 
 class AIConfig:
     def __init__(self, ai_name="", ai_role="", ai_goals=[]):
@@ -9,7 +10,7 @@ class AIConfig:
         self.ai_goals = ai_goals
 
     # Soon this will go in a folder where it remembers more stuff about the run(s)
-    SAVE_FILE = os.path.join(os.path.dirname(__file__), '..', 'ai_settings.yaml')
+    SAVE_FILE = os.path.join(os.path.dirname(__file__), "..", "ai_settings.yaml")
 
     @classmethod
     def load(cls, config_file=SAVE_FILE):
@@ -44,5 +45,5 @@ class AIConfig:
         for i, goal in enumerate(self.ai_goals):
             full_prompt += f"{i+1}. {goal}\n"
 
-        full_prompt += f"\n\n{data.load_prompt()}"
+        full_prompt += f"\n\n{load_prompt()}"
         return full_prompt

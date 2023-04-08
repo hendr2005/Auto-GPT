@@ -3,6 +3,7 @@ import chat
 from config import Config
 from colorama import Fore, Style
 import commands as cmd
+from data.response_prompt import get_instructions
 from memory import get_memory
 from spinner import Spinner
 from run_utils import (
@@ -64,10 +65,11 @@ class AutoGPT:
             # Get command name and arguments
             command_name = ""
             arguments = ""
-            try:
-                command_name, arguments = cmd.get_command(assistant_reply)
-            except Exception as e:
-                print_to_console("Error: \n", Fore.RED, str(e))
+
+            command_name, arguments = cmd.get_command(assistant_reply)
+
+            if command_name == "Error":
+                print_to_console("Failed: \n", Fore.RED, f"ERROR = {arguments}")
 
             print_to_console(
                 "NEXT ACTION: ",
