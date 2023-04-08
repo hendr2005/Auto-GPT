@@ -1,7 +1,6 @@
 import browse
 import json
-from memory.pinecone import PineconeMemory
-from memory.redismem import RedisMemory
+from memory import get_memory
 import datetime
 import agent_manager as agents
 import speak
@@ -54,13 +53,11 @@ def get_command(response):
 
 
 def execute_command(command_name, arguments):
-    if cfg.memory_backend == "pinecone":
-        memory = PineconeMemory(cfg=cfg)
-    else:
-        memory = RedisMemory(cfg=cfg)
+    memory = get_memory(cfg)
+
     try:
         if command_name == "google":
-            
+
             # Check if the Google API key is set and use the official search method
             # If the API key is not set or has only whitespaces, use the unofficial search method
             if cfg.google_api_key and (cfg.google_api_key.strip() if cfg.google_api_key else None):
