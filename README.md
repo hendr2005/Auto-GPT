@@ -236,6 +236,8 @@ VICUNA_PATH=<path to vicuna weights>
 
 The path should be the output dir, not a specific file.
 
+This doesn't work great yet.
+
 ## ⚠️ Limitations
 This experiment aims to showcase the potential of GPT-4 but comes with some limitations:
 
