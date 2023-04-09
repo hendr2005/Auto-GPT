@@ -225,7 +225,29 @@ python scripts/main.py --gpt3only
 
 First, you will need to apply the Vicuna weights to a LLaMA model.
 
-See https://github.com/BillSchumacher/FastChat#vicuna-weights for more info on that.
+You will need to first clone the LLaMA model from:
+
+https://huggingface.co/decapoda-research/llama-7b-hf/tree/main
+
+Then, clone my transformers repo at:
+
+https://github.com/BillSchumacher/transformers
+
+Unless the tokenizer name is fixed after the time of this writing, then the normal transformers should work.
+
+You will also need a CUDA version of PyTorch installed.
+
+See https://pytorch.org/ for more info on that.
+
+In your terminal:
+
+```
+pip uninstall transformers
+cd /path/to/cloned/transformers/repo
+python setup.py install
+```
+
+See https://github.com/BillSchumacher/FastChat#vicuna-weights for more info on apply the delta weights.
 
 Once you have a model with Vicuna weights applied you'll need to setup your .envs like so:
 
