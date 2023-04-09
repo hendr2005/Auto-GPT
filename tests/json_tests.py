@@ -110,6 +110,5 @@ class TestParseJson(unittest.TestCase):
         self.assertEqual(fix_and_parse_json(json_str, try_to_fix_with_gpt=False), good_obj)
 
 
-
 if __name__ == '__main__':
     unittest.main()

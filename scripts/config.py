@@ -72,11 +72,15 @@ class Config(metaclass=Singleton):
         self.llm_device = os.getenv("LLM_DEVICE", "cuda")
         self.tokenizer_path = os.getenv("TOKENIZER_PATH")
         self.memory_backend = os.getenv("MEMORY_BACKEND", 'local')
+        self.debug = os.getenv("DEBUG", "False") == 'True'
         # Initialize the OpenAI API client
         openai.api_key = self.openai_api_key
 
     def set_continuous_mode(self, value: bool):
         self.continuous_mode = value
+
+    def set_debug(self, value: bool):
+        self.debug = value
 
     def set_speak_mode(self, value: bool):
         self.speak_mode = value

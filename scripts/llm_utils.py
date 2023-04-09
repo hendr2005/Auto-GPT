@@ -16,7 +16,6 @@ else:
     SeparatorStyle = None
 
 
-
 openai.api_key = cfg.openai_api_key
 
 # Overly simple abstraction until we create something better
@@ -107,7 +106,19 @@ def generate_stream(model, tokenizer, params, device,
 
 
 def create_vicuna_completions(messages):
-    return [vicuna_interact(message) for message in messages][0]
+    results = [vicuna_interact(message) for message in messages]
+    if cfg.debug:
+        print("results", [results])
+    result = None
+    for result in results:
+        if isinstance(result, list):
+            for item in result:
+                if item.startswith("{"):
+                    result = item
+                    break
+    if cfg.debug:
+        print("result", result)
+    return result
 
 
 def vicuna_interact(message, temperature=0.7, max_new_tokens=512):
@@ -116,25 +127,29 @@ def vicuna_interact(message, temperature=0.7, max_new_tokens=512):
     model = instance.model
     tokenizer = instance.tokenizer
     # Chat
-    print(message)
+    if cfg.debug:
+        print(message)
     conv = instance.conv
     role = message['role']
     if role == 'system':
         if conv.system == "":
             conv.system = message['content']
-        conv.append_message(conv.roles[0], message['content'])
-        # return ""
+            return ""
+        if message['content'].startswith("Permanent"):
+            conv.append_message(conv.roles[0], message['content'])
     if role == 'user':
         conv.append_message(conv.roles[1], message['content'])
     if role == 'assistant':
-        conv.append_message(conv.roles[2], message['content'])
-    if role == 'gpt':
-        conv.append_message(conv.roles[3], message['content'])
+        if message['content'] == '' or len(message['content']) < 10:
+            return ""
+    #    conv.append_message(conv.roles[2], message['content'])
+    #if role == 'gpt':
+    #    conv.append_message(conv.roles[3], message['content'])
     conv.append_message(conv.roles[3], None)
     generate_stream_func = generate_stream
     prompt = conv.get_prompt()
     skip_echo_len = len(prompt) + 1
-    print(prompt)
+    # print(prompt)
     params = {
         "model": cfg.vicuna_path,
         "prompt": prompt,
@@ -152,8 +167,8 @@ def vicuna_interact(message, temperature=0.7, max_new_tokens=512):
             pre = now - 1
     # print(" ".join(outputs[pre:]), flush=True)
     output =  " ".join(outputs)
-    conv.messages[-1][-1]  = output
+    conv.messages[-1][-1] = output
 
-    if True:
-        print("\n", {"prompt": prompt, "outputs": outputs}, "\n")
+    if cfg.debug:
+        print([output])
     return output

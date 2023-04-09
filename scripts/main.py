@@ -38,11 +38,11 @@ def print_to_console(
             print(word, end="", flush=True)
             if i < len(words) - 1:
                 print(" ", end="", flush=True)
-            typing_speed = random.uniform(min_typing_speed, max_typing_speed)
-            time.sleep(typing_speed)
+            #typing_speed = random.uniform(min_typing_speed, max_typing_speed)
+            # time.sleep(typing_speed)
             # type faster after each word
-            min_typing_speed = min_typing_speed * 0.95
-            max_typing_speed = max_typing_speed * 0.95
+            # min_typing_speed = min_typing_speed * 0.95
+            #max_typing_speed = max_typing_speed * 0.95
     print()
 
 
@@ -267,6 +267,9 @@ def parse_arguments():
         print_to_console("GPT3.5 Only Mode: ", Fore.GREEN, "ENABLED")
         cfg.set_smart_llm_model(cfg.fast_llm_model)
 
+    if args.debug:
+        print_to_console("Debug Mode: ", Fore.GREEN, "ENABLED")
+        cfg.set_debug(True)
 
 # TODO: fill in llm values here
 
@@ -291,6 +294,7 @@ print('Using memory of type: ' + memory.__class__.__name__)
 
 # Interaction Loop
 while True:
+    VicunaModel().conv.messsage = ()
     # Send message to AI, get response
     #with Spinner("Thinking... "):
     assistant_reply = chat.chat_with_ai(

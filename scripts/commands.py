@@ -25,10 +25,12 @@ def is_valid_int(value):
 
 def get_command(response):
     try:
-        response_json = fix_and_parse_json(response)
+        response_json = fix_and_parse_json(response, True)
+        if cfg.debug:
+            print("response_json", response_json)
         
         if "command" not in response_json:
-            return "Error:" , "Missing 'command' object in JSON"
+            return "Error:", "Missing 'command' object in JSON"
         
         command = response_json["command"]
 

@@ -72,8 +72,8 @@ def chat_with_ai(
             send_token_limit = token_limit - 1000
 
             relevant_memory = permanent_memory.get_relevant(str(full_message_history[-5:]), 10)
-
-            if debug:
+            if cfg.debug:
+                print("relevant memory", [relevant_memory])
                 print('Memory Stats: ', permanent_memory.get_stats())
 
             next_message_to_add_index, current_tokens_used, insertion_index, current_context = generate_context(
