@@ -5,6 +5,7 @@ from memory import get_memory
 import data
 import chat
 from colorama import Fore, Style
+from llm_models import VicunaModel
 from spinner import Spinner
 import time
 import speak
@@ -50,7 +51,7 @@ def print_assistant_thoughts(assistant_reply):
     global cfg
     try:
         # Parse and print Assistant response
-        assistant_reply_json = fix_and_parse_json(assistant_reply)
+        assistant_reply_json = fix_and_parse_json(assistant_reply, True)
 
         # Check if assistant_reply_json is a string and attempt to parse it into a JSON object
         if isinstance(assistant_reply_json, str):
@@ -324,6 +325,9 @@ while True:
             console_input = input(Fore.MAGENTA + "Input:" + Style.RESET_ALL)
             if console_input.lower() == "y":
                 user_input = "GENERATE NEXT COMMAND JSON"
+                break
+            if console_input.lower().startswith("debug conv"):
+                print(VicunaModel().conv.messages)
                 break
             elif console_input.lower().startswith("y -"):
                 try:
