@@ -50,6 +50,35 @@ def add_quotes_to_property_names(json_string: str) -> str:
         raise ValueError(f"Failed to correct JSON string: {e}")
 
 
+def balance_braces(json_string: str) -> str:
+    """
+    Balance the braces in a JSON string.
+
+    Args:
+        json_string (str): The JSON string.
+
+    Returns:
+        str: The JSON string with braces balanced.
+    """
+    
+    open_braces_count = json_string.count('{')
+    close_braces_count = json_string.count('}')
+
+    while open_braces_count > close_braces_count:
+        json_string += '}'
+        close_braces_count += 1
+
+    while close_braces_count > open_braces_count:
+        json_string = json_string.rstrip('}')
+        close_braces_count -= 1
+
+    try:
+        json.loads(json_string)
+        return json_string
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Failed to correct JSON string: {e}")
+
+
 def fix_and_parse_json(json_str: str, try_to_fix_with_gpt: bool = True):
     json_schema = """
     {
@@ -97,7 +126,8 @@ def fix_and_parse_json(json_str: str, try_to_fix_with_gpt: bool = True):
                 if cfg.debug:
                     print('json loads error - add quotes', e)
                 error_message = str(e)
-
+        if balanced_str := balance_braces(json_str):
+            return json.loads(balanced_str)
         # Let's do something manually -
         #   sometimes GPT responds with something BEFORE the braces:
         # "I'm sorry, I don't understand. Please try again.
