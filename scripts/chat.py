@@ -23,12 +23,16 @@ def create_chat_message(role, content):
     return {"role": role, "content": content}
 
 
-def generate_context(prompt, relevant_memory, full_message_history, model):
-    current_context = [
-        create_chat_message(
-            "system", prompt), create_chat_message(
-            "system", f"Permanent memory: {relevant_memory}")]
-
+def generate_context(prompt, relevant_memory, full_message_history, model, init=False):
+    if init:
+        current_context = [
+            create_chat_message(
+                "system", prompt), create_chat_message(
+                "system", f"Permanent memory: {relevant_memory}")]
+    else:
+        current_context = [
+            create_chat_message(
+                "system", f"Permanent memory: {relevant_memory}")]
     # Add messages from the full message history until we reach the token limit
     next_message_to_add_index = len(full_message_history) - 1
     insertion_index = len(current_context)
@@ -45,6 +49,7 @@ def chat_with_ai(
         permanent_memory,
         token_limit,
         debug=False):
+    i = 0
     while True:
         try:
             """
@@ -72,20 +77,20 @@ def chat_with_ai(
                 print('Memory Stats: ', permanent_memory.get_stats())
 
             next_message_to_add_index, current_tokens_used, insertion_index, current_context = generate_context(
-                prompt, relevant_memory, full_message_history, model)
+                prompt, relevant_memory, full_message_history, model, init=i == 0)
 
-            while current_tokens_used > 2500:
-                # remove memories until we are under 2500 tokens
-                relevant_memory = relevant_memory[1:]
-                next_message_to_add_index, current_tokens_used, insertion_index, current_context = generate_context(
-                    prompt, relevant_memory, full_message_history, model)
+            if not cfg.use_vicuna:
+                while current_tokens_used > 2500:
+                    # remove memories until we are under 2500 tokens
+                    relevant_memory = relevant_memory[1:]
+                    next_message_to_add_index, current_tokens_used, insertion_index, current_context = generate_context(
+                        prompt, relevant_memory, full_message_history, model)
 
             current_tokens_used += token_counter.count_message_tokens([create_chat_message("user", user_input)], model) # Account for user input (appended later)
 
             while next_message_to_add_index >= 0:
                 # print (f"CURRENT TOKENS USED: {current_tokens_used}")
                 message_to_add = full_message_history[next_message_to_add_index]
-
                 tokens_to_add = token_counter.count_message_tokens([message_to_add], model)
                 if current_tokens_used + tokens_to_add > send_token_limit:
                     break
@@ -141,3 +146,5 @@ def chat_with_ai(
             # TODO: WHen we switch to langchain, this is built in
             print("Error: ", "API Rate Limit Reached. Waiting 10 seconds...")
             time.sleep(10)
+        
+        i += 1

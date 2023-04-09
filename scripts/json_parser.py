@@ -7,7 +7,7 @@ def fix_and_parse_json(json_str: str, try_to_fix_with_gpt: bool = True):
     json_schema = """
     {
     "command": {
-        "name": "command name",
+        "name": "command_name",
         "args":{
             "arg name": "value"
         }

@@ -291,13 +291,13 @@ print('Using memory of type: ' + memory.__class__.__name__)
 # Interaction Loop
 while True:
     # Send message to AI, get response
-    with Spinner("Thinking... "):
-        assistant_reply = chat.chat_with_ai(
-            prompt,
-            user_input,
-            full_message_history,
-            memory,
-            cfg.fast_token_limit) # TODO: This hardcodes the model to use GPT3.5. Make this an argument
+    #with Spinner("Thinking... "):
+    assistant_reply = chat.chat_with_ai(
+        prompt,
+        user_input,
+        full_message_history,
+        memory,
+        cfg.fast_token_limit) # TODO: This hardcodes the model to use GPT3.5. Make this an argument
 
     # Print Assistant thoughts
     print_assistant_thoughts(assistant_reply)

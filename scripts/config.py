@@ -67,7 +67,10 @@ class Config(metaclass=Singleton):
         self.wipe_redis_on_start = os.getenv("WIPE_REDIS_ON_START", "True") == 'True'
         self.memory_index = os.getenv("MEMORY_INDEX", 'auto-gpt')
         # Note that indexes must be created on db 0 in redis, this is not configureable.
-
+        self.use_vicuna = os.getenv("USE_VICUNA", "True") == 'True'
+        self.vicuna_path = os.getenv("VICUNA_PATH")
+        self.llm_device = os.getenv("LLM_DEVICE", "cuda")
+        self.tokenizer_path = os.getenv("TOKENIZER_PATH")
         self.memory_backend = os.getenv("MEMORY_BACKEND", 'local')
         # Initialize the OpenAI API client
         openai.api_key = self.openai_api_key
