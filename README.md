@@ -221,6 +221,21 @@ If you don't have access to the GPT4 api, this mode will allow you to use Auto-G
 python scripts/main.py --gpt3only
 ```
 
+## Vicuna Local
+
+First, you will need to apply the Vicuna weights to a LLaMA model.
+
+See https://github.com/BillSchumacher/FastChat#vicuna-weights for more info on that.
+
+Once you have a model with Vicuna weights applied you'll need to setup your .envs like so:
+
+```
+USE_VICUNA=True
+VICUNA_PATH=<path to vicuna weights>
+```
+
+The path should be the output dir, not a specific file.
+
 ## ⚠️ Limitations
 This experiment aims to showcase the potential of GPT-4 but comes with some limitations:
 
