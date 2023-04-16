@@ -56,7 +56,7 @@ def print_to_console(
         speak.say_text(f"{title}. {content}")
     print(title_color + title + " " + Style.RESET_ALL, end="")
     if content:
-        logger.info(title + ': ' + content)
+        logger.info(f'{title}: {content}')
         if isinstance(content, list):
             content = " ".join(content)
         words = content.split()
@@ -166,8 +166,8 @@ def load_variables(config_file="config.yaml"):
             if ai_goal == "":
                 break
             ai_goals.append(ai_goal)
-        if len(ai_goals) == 0:
-            ai_goals = ["Increase net worth", "Grow Twitter Account", "Develop and manage multiple businesses autonomously"]
+    if not ai_goals:
+        ai_goals = ["Increase net worth", "Grow Twitter Account", "Develop and manage multiple businesses autonomously"]
 
     # Save variables to yaml file
     config = {"ai_name": ai_name, "ai_role": ai_role, "ai_goals": ai_goals}
@@ -191,10 +191,11 @@ def construct_prompt():
     config = AIConfig.load()
     if config.ai_name:
         print_to_console(
-            f"Welcome back! ",
+            "Welcome back! ",
             Fore.GREEN,
             f"Would you like me to return to being {config.ai_name}?",
-            speak_text=True)
+            speak_text=True,
+        )
         should_continue = utils.clean_input(f"""Continue with the last settings?
 Name:  {config.ai_name}
 Role:  {config.ai_role}
@@ -211,8 +212,7 @@ Continue (y/n): """)
     global ai_name
     ai_name = config.ai_name
 
-    full_prompt = config.construct_full_prompt()
-    return full_prompt
+    return config.construct_full_prompt()
 
 
 def prompt_user():
@@ -261,12 +261,11 @@ def prompt_user():
         if ai_goal == "":
             break
         ai_goals.append(ai_goal)
-    if len(ai_goals) == 0:
+    if not ai_goals:
         ai_goals = ["Increase net worth", "Grow Twitter Account",
                     "Develop and manage multiple businesses autonomously"]
 
-    config = AIConfig(ai_name, ai_role, ai_goals)
-    return config
+    return AIConfig(ai_name, ai_role, ai_goals)
 
 def parse_arguments():
     """Parses the arguments passed to the script"""
@@ -324,7 +323,7 @@ user_input = "Determine which next command to use, and respond using the format 
 # Initialize memory and make sure it is empty.
 # this is particularly important for indexing and referencing pinecone memory
 memory = get_memory(cfg, init=True)
-print('Using memory of type: ' + memory.__class__.__name__)
+print(f'Using memory of type: {memory.__class__.__name__}')
 
 
 plugins_found = load_plugins(Path(os.getcwd()) / "plugins")
@@ -383,10 +382,9 @@ while True:
             f"Enter 'y' to authorise command, 'y -N' to run N continuous commands, 'n' to exit program, or enter feedback for {ai_name}...",
             flush=True)
         while True:
-            console_input = utils.clean_input(Fore.MAGENTA + "Input:" + Style.RESET_ALL)
+            console_input = utils.clean_input(f"{Fore.MAGENTA}Input:{Style.RESET_ALL}")
             if console_input.lower() == "y":
                 user_input = "GENERATE NEXT COMMAND JSON"
-                break
             elif console_input.lower().startswith("y -"):
                 try:
                     next_action_count = abs(int(console_input.split(" ")[1]))
@@ -394,15 +392,12 @@ while True:
                 except ValueError:
                     print("Invalid input format. Please enter 'y -n' where n is the number of continuous tasks.")
                     continue
-                break
             elif console_input.lower() == "n":
                 user_input = "EXIT"
-                break
             else:
                 user_input = console_input
                 command_name = "human_feedback"
-                break
-
+            break
         if user_input == "GENERATE NEXT COMMAND JSON":
             print_to_console(
             "-=-=-=-=-=-=-= COMMAND AUTHORISED BY USER -=-=-=-=-=-=-=",
@@ -420,7 +415,7 @@ while True:
 
     # Execute command
     if command_name.lower().startswith( "error" ):
-        result = f"Command {command_name} threw the following error: " + arguments
+        result = f"Command {command_name} threw the following error: {arguments}"
     elif command_name == "human_feedback":
         result = f"Human feedback: {user_input}"
     else:
